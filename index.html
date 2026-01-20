@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Makena Space | Excelência Gastronómica e Formação</title>
+    <!-- Tailwind CSS para estilização rápida e moderna -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            /* --- ÁREA DE EDIÇÃO DE CORES (Tema Lilás e Roxo) --- */
+            --brand-primary: #4a0e4e; 
+            --brand-secondary: #7b1fa2;
+            --brand-accent: #d8b4fe;
+            --bg-light: #fbf5ff;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            scroll-behavior: smooth;
+        }
+        h1, h2, h3, .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Classes Utilitárias */
+        .bg-primary { background-color: var(--brand-primary); }
+        .bg-secondary { background-color: var(--brand-secondary); }
+        .text-primary { color: var(--brand-primary); }
+        .text-accent { color: var(--brand-accent); }
+        .bg-accent { background-color: var(--brand-accent); }
+        .border-accent { border-color: var(--brand-accent); }
+        .bg-light { background-color: var(--bg-light); }
+
+        /* Hover Effects */
+        .hover-text-accent:hover { color: var(--brand-accent); transition: color 0.3s; }
+        .hover-bg-primary:hover { background-color: var(--brand-primary); transition: background 0.3s; }
+        
+        /* Animações */
+        .fade-in { animation: fadeIn 1.2s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Menu Hambúrguer Overlay - FIX CORRIGIDO */
+        #menu-overlay {
+            transition: transform 0.4s ease-in-out;
+            transform: translateX(100%);
+            z-index: 1000 !important; /* Prioridade Máxima */
+        }
+        #menu-overlay.active {
+            transform: translateX(0);
+        }
+
+        /* Garante que o botão do menu apareça */
+        #menu-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 950; /* Acima do header normal */
+        }
+        @media (min-width: 1024px) {
+            #menu-btn { display: none; }
+        }
+
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .photo-caption {
+            font-size: 0.875rem;
+            color: #4b5563;
+            margin-top: 0.5rem;
+            font-style: italic;
+            border-left: 3px solid var(--brand-accent);
+            padding-left: 0.5rem;
+        }
+        
+        .photo-caption-dark {
+            color: #e5e7eb;
+            background: rgba(0,0,0,0.6);
+            padding: 0.5rem;
+            border-left: 3px solid var(--brand-accent);
+        }
+
+        .service-card:hover .overlay {
+            opacity: 1;
+        }
+
+        /* Estilo para Select */
+        select option {
+            background-color: var(--brand-primary);
+            color: white;
+            padding: 10px;
+        }
+
+        /* --- Estilos Específicos para Vídeos (Embeds Elegantes) --- */
+        
+        .video-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .embed-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 0.75rem; /* Arredondamento suave */
+            background-color: #000;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5); /* Profundidade interna */
+        }
+
+        /* Definição rigorosa de proporções para evitar saltos de layout */
+        .ratio-16-9 { padding-bottom: 56.25%; }  /* 16:9 Standard (Horizontal) */
+        .ratio-9-16 { padding-bottom: 177.77%; } /* 9:16 Full Portrait (Vertical) */
+
+        .embed-container iframe, 
+        .embed-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: none;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800" id="main-body">
+
+    <!-- Header & Navigation -->
+    <header class="fixed w-full z-[900] bg-white shadow-md">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl border border-accent">M</div>
+                <span class="text-2xl font-serif font-bold tracking-wider text-primary">MAKENA SPACE</span>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <nav class="hidden lg:flex space-x-8 items-center font-medium mr-4">
+                    <a href="#home" class="hover-text-accent transition">Início</a>
+                    <a href="#sobre" class="hover-text-accent transition">Sobre</a>
+                    <a href="#servicos" class="hover-text-accent transition">Serviços</a>
+                    <a href="#formacoes" class="hover-text-accent transition">Formações</a>
+                    <a href="#videos" class="hover-text-accent transition">Vídeos</a>
+                    <a href="#orcamento" class="hover-text-accent transition">Calculadora</a>
+                    <a href="#contato" class="bg-primary text-white px-6 py-2 rounded-full hover:opacity-90 transition border border-transparent hover:border-accent">Orçamento</a>
+                </nav>
+
+                <button id="fullscreen-btn" onclick="toggleFullScreen()" class="p-2 text-primary hover:text-accent transition rounded-full hover:bg-gray-100" title="Modo Imersivo">
+                    <i data-lucide="maximize" class="w-6 h-6"></i>
+                </button>
+
+                <button id="menu-btn" class="p-2 text-primary focus:outline-none hover:text-accent transition bg-gray-100 rounded-lg border border-gray-200 shadow-sm">
+                    <i data-lucide="menu" class="w-8 h-8"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation Overlay -->
+    <div id="menu-overlay" class="fixed inset-0 bg-primary text-white flex flex-col items-center justify-center space-y-8 text-2xl font-serif">
+        <button id="close-menu" class="absolute top-6 right-6 text-white hover-text-accent p-2 bg-white/10 rounded-full">
+            <i data-lucide="x" class="w-10 h-10"></i>
+        </button>
+        <a href="#home" class="hover-text-accent transition">Início</a>
+        <a href="#sobre" class="hover-text-accent transition">Sobre Nós</a>
+        <a href="#servicos" class="hover-text-accent transition">Serviços</a>
+        <a href="#formacoes" class="hover-text-accent transition">Cursos & Formações</a>
+        <a href="#videos" class="hover-text-accent transition">Galeria de Vídeos</a>
+        <a href="#orcamento" class="hover-text-accent transition">Calculadora</a>
+        <a href="#contato" class="hover-text-accent transition text-accent border border-accent px-8 py-2">Solicitar Orçamento</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative h-screen flex items-center pt-20 overflow-hidden">
+        <div class="absolute inset-0 bg-black/40 z-10"></div>
+        
+        <img src="https://scontent-cpt1-1.xx.fbcdn.net/v/t39.30808-6/490735527_1224324416360413_7327107538918600776_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeEdZaDxzbJLDz9LgddhvPIv2Ay0EkpCq3nYDLQSSkKreXd5M31Yuo7VGEN2XCF4ZlzDDZ9VrcjGkbZgDUn11ki5&_nc_ohc=HDWBP3KF554Q7kNvwEAvYie&_nc_oc=AdnF5-EG-PzuJqCjSK0b9_ZVm0tJqTjExgMpHRyT7tRDE7isEO9hWmKGjV40VZi6lZ99tKQYX9YEkzPBSw_QbWA0&_nc_zt=23&_nc_ht=scontent-cpt1-1.xx&_nc_gid=uICJoKeYJRlezR5E6WEQuw&oh=00_AfrMqL9BzdYrDWyjJyGeS9DmU8TvUbFmGM0fZFXWzW_eZw&oe=6975C892" 
+             alt="Catering de Luxo Makena Space" 
+             class="absolute inset-0 w-full h-full object-cover">
+        
+        <div class="absolute bottom-10 right-6 z-20 max-w-xs text-right hidden md:block">
+            <p class="photo-caption-dark text-sm">
+                Workshop de Culinária.
+            </p>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-20 text-white">
+            <div class="max-w-3xl fade-in">
+                <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-6">Gastronomia que Transforma Momentos</h1>
+                <p class="text-xl md:text-2xl mb-10 text-gray-200">Desde Coffee break até a Confecção de alimentos para eventos corporativos e particulares. Entregamos excelência,sabor e sofisticação em cada detalhe.</p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#servicos" class="bg-primary border border-accent text-white px-10 py-4 rounded-full text-lg font-bold hover:scale-105 transition-transform text-center shadow-lg">Descubra Nossos Serviços</a>
+                    <a href="#contato" class="border-2 border-white text-white px-10 py-4 rounded-full text-lg font-bold hover:bg-white hover:text-primary transition text-center backdrop-blur-sm">Solicite Orçamento</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre Section -->
+    <section id="sobre" class="py-24 bg-light">
+        <div class="container mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-16 items-start">
+                <div>
+                    <span class="text-accent font-bold tracking-widest uppercase text-sm">Sobre a Makena Space</span>
+                    <h2 class="text-4xl font-bold mt-4 mb-8 text-primary">Compromisso com a Qualidade e Inovação</h2>
+                    <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                        A Makena Espaço Comércio e Serviços(SU) é uma empresa especializada nas áreas de Gastronomia Profissional e Formações Técnicas, actuando com foco em excelência operacional, identidade cultural e elevados padrões de qualidade.
+                    </p>
+                    <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                        Com uma proposta de valor assente no sabor Tradicional, combinamos técnicas modernas de confecção, organização eficiente e formação prática, posicionando-nos como parceiros estratégicos para empresas, instituições e clientes particulares.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-6 bg-white rounded-xl shadow-sm border-l-4 border-accent">
+                            <h3 class="font-bold text-xl mb-2 text-primary">Nossa Missão</h3>
+                            <p class="text-gray-500 italic">Fornecer soluções gastronómicas e formativas com qualidade, rigor e autenticidade.</p>
+                        </div>
+                        <div class="p-6 bg-white rounded-xl shadow-sm border-l-4 border-accent">
+                            <h3 class="font-bold text-xl mb-2 text-primary">Nossa Visão</h3>
+                            <p class="text-gray-500 italic">Consolidar a MAKENA SPACE como referência em gastronomia tradicional e formação profissional aplicada.</p>
+                        </div>
+                        <div class="p-6 bg-white rounded-xl shadow-sm border-l-4 border-accent md:col-span-2">
+                            <h3 class="font-bold text-xl mb-3 text-primary">Nossos Valores</h3>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="px-3 py-1 bg-light text-primary text-sm font-medium rounded-full border border-accent/30">Qualidade</span>
+                                <span class="px-3 py-1 bg-light text-primary text-sm font-medium rounded-full border border-accent/30">Compromisso</span>
+                                <span class="px-3 py-1 bg-light text-primary text-sm font-medium rounded-full border border-accent/30">Tradição</span>
+                                <span class="px-3 py-1 bg-light text-primary text-sm font-medium rounded-full border border-accent/30">Profissionalismo</span>
+                                <span class="px-3 py-1 bg-light text-primary text-sm font-medium rounded-full border border-accent/30">Inovação</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="relative group">
+                        <div class="image-container rounded-2xl shadow-2xl relative z-10 bg-white">
+                            <img src="https://scontent-cpt1-1.xx.fbcdn.net/v/t39.30808-6/513488161_1289175243208663_1875676655771171648_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeHw3ed_wUm5pLHKw-Hu4zF07Aa-XKGP5JrsBr5coY_kmh10_LSrjSX2iwMxyubKjasSsTtmSBl76CTnxL2CIj19&_nc_ohc=pI5q6JVNoaYQ7kNvwHXtK3V&_nc_oc=AdnDSpA8BjWWIdxrmBFVpgfBTLH2CPyY8s0IQVjJ2sW7F-utwp3P-wQY0RPfqU6irghN4qkQEKm8btmxqKFnZb7X&_nc_zt=23&_nc_ht=scontent-cpt1-1.xx&_nc_gid=x7_yM3lX4bFba2HVZgq_dg&oh=00_AfqxFkjRWpXFugq66Tyu3i5LnEM_vC61xJ8YLs3uc8spfA&oe=6972B4CB" 
+                                 alt="Equipa Makena Space" 
+                                 class="rounded-t-2xl w-full">
+                            <div class="p-4 bg-white rounded-b-2xl">
+
+                            <div class="absolute bottom-10 right-6 z-20 max-w-xs text-right hidden md:block">
+                                <p class="photo-caption-dark text-sm">
+                                    Chef. Dálvia Pata.
+                                </p>
+                            </div>
+                                <p class="photo-caption">Nossa equipa de chefs e formadores certificados em ação.</p>
+                            </div>
+                        </div>
+                        <div class="absolute -top-6 -right-6 w-32 h-32 bg-accent opacity-10 rounded-full blur-3xl"></div>
+                        <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-primary opacity-10 rounded-full blur-3xl"></div>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                        <h3 class="font-bold text-xl mb-4 text-primary flex items-center gap-2">
+                            <i data-lucide="star" class="text-accent fill-current w-5 h-5"></i>
+                            Diferenciais Competitivos
+                        </h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-secondary flex-shrink-0 mt-0.5"></i><span class="text-gray-600">Identidade gastronómica própria</span></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-secondary flex-shrink-0 mt-0.5"></i><span class="text-gray-600">Equipa qualificada e organizada</span></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-secondary flex-shrink-0 mt-0.5"></i><span class="text-gray-600">Flexibilidade operacional</span></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-secondary flex-shrink-0 mt-0.5"></i><span class="text-gray-600">Atendimento personalizado</span></li>
+                            <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-5 h-5 text-secondary flex-shrink-0 mt-0.5"></i><span class="text-gray-600">Compromisso com resultados e satisfação</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-primary text-white p-8 rounded-2xl shadow-lg relative overflow-hidden">
+                        <div class="relative z-10">
+                            <h3 class="font-bold text-xl mb-4 text-accent flex items-center gap-2">
+                                <i data-lucide="target" class="w-5 h-5"></i>
+                                Público Alvo
+                            </h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-white/10 px-3 py-1.5 rounded-lg text-sm border border-white/20">Empresas</span>
+                                <span class="bg-white/10 px-3 py-1.5 rounded-lg text-sm border border-white/20">Instituições</span>
+                                <span class="bg-white/10 px-3 py-1.5 rounded-lg text-sm border border-white/20">Escolas</span>
+                                <span class="bg-white/10 px-3 py-1.5 rounded-lg text-sm border border-white/20">Organizações</span>
+                                <span class="bg-white/10 px-3 py-1.5 rounded-lg text-sm border border-white/20">Particulares</span>
+                            </div>
+                        </div>
+                        <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-accent opacity-20 rounded-full blur-2xl"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nossos Serviços -->
+    <section id="servicos" class="py-24">
+        <div class="container mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-4xl font-bold text-primary mb-4">Serviços Especializados</h2>
+                <div class="h-1 w-20 bg-accent mx-auto mb-6"></div>
+                <p class="text-gray-600">Soluções completas desenhadas para superar as expectativas dos paladares mais exigentes.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="service-card group relative h-[450px] overflow-hidden rounded-2xl shadow-lg cursor-pointer bg-black">
+                    <img src="https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&q=80&w=600" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-80" alt="Catering Corporativo">
+                    <div class="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent flex flex-col justify-end p-8 text-white">
+                        <h3 class="text-2xl font-bold mb-2">Catering Corporativo</h3>
+                        <p class="text-xs text-accent mb-2 font-bold uppercase tracking-wider"></p>
+                        <p class="text-sm">Logística impecável para empresas de alto padrão, desde reuniões a grandes conferências.</p>
+                    </div>
+                </div>
+                <div class="service-card group relative h-[450px] overflow-hidden rounded-2xl shadow-lg cursor-pointer bg-black">
+                    <img src="https://scontent-cpt1-1.xx.fbcdn.net/v/t39.30808-6/473600874_3583629598447708_8820529588282963455_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeGG3LFV27dENJi65_ParaLoJ_aLQ9fNvJIn9otD1828kh2oYUDE-U5ryi4RC-EObpHqEVU8iSCitRQMU8YJJ0FE&_nc_ohc=wgJOEml25SEQ7kNvwHTOMl3&_nc_oc=AdmM5d-3JLukEj6s9OTotFBrlQH0dcgqbq2pfSBDqoGBNKJmZkUquOdK8igxwTHnNPj_tvN6uamrI8h_OxvOOqhq&_nc_zt=23&_nc_ht=scontent-cpt1-1.xx&_nc_gid=NRmyiuZS2zNM7kXW_fYFSg&oh=00_AfoJ5ifKQswoYtMSGYB0pQL17_WWE-nWiz1_vgeVFijCWg&oe=6972EB7D" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-80" alt="Casamentos & Eventos VIP">
+                    <div class="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent flex flex-col justify-end p-8 text-white">
+                        <h3 class="text-2xl font-bold mb-2">Casamentos & Eventos VIP</h3>
+                        <p class="text-xs text-accent mb-2 font-bold uppercase tracking-wider"></p>
+                        <p class="text-sm">Menus personalizados para o seu grande dia, com atenção a cada detalhe decorativo.</p>
+                    </div>
+                </div>
+                <div class="service-card group relative h-[450px] overflow-hidden rounded-2xl shadow-lg cursor-pointer bg-black">
+                    <img src="https://scontent-cpt1-1.xx.fbcdn.net/v/t39.30808-6/513825629_1294723102653877_2256483629099235858_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeHp-WNnRciUZ5t0Aq9Nis2QTLHcdKLCfO9Msdx0osJ876c3GncDN_7qO5WLrC0tDMo85Vln9ZzH22D803XtePn0&_nc_ohc=hBOhFE78sCMQ7kNvwEqeB_G&_nc_oc=Adlb4tf3oWR49a3LSS8d9fR93n_aft-3TwfTkOkpHtXuH6t0x1LAbrfdxIgY8OlhFjK8BnJ3seLVwdCDLn2bvjFi&_nc_zt=23&_nc_ht=scontent-cpt1-1.xx&_nc_gid=ShkDk3u8WUiH1O09LrwMYw&oh=00_Afo96FxMJcZ1hVYqKNa6pOpCW8fXtHFmr8q-90P_KyGM4Q&oe=6972DBBB" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-80" alt="Refeições Individuais">
+                    <div class="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent flex flex-col justify-end p-8 text-white">
+                        <h3 class="text-2xl font-bold mb-2">Singulares & Gourmet</h3>
+                        <p class="text-xs text-accent mb-2 font-bold uppercase tracking-wider"></p>
+                        <p class="text-sm">Entregas de alto padrão para momentos privados e jantares exclusivos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formações -->
+    <section id="formacoes" class="py-24 bg-primary text-white">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col lg:flex-row gap-16">
+                <div class="lg:w-1/2">
+                    <span class="text-accent font-bold uppercase tracking-widest text-sm">Academia Makena</span>
+                    <h2 class="text-4xl md:text-5xl font-bold mt-4 mb-6 leading-tight">Torne-se um Profissional</h2>
+                    <p class="text-gray-300 mb-8 text-lg">Selecione abaixo a formação ideal para a sua carreira e inscreva-se agora.</p>
+                    
+                    <div class="bg-white/10 backdrop-blur-sm p-8 rounded-2xl border border-white/20 shadow-2xl">
+                        <form action="https://formsubmit.co/makenaespaco21@gmail.com" method="POST" target="_blank" class="space-y-4">
+                            <input type="hidden" name="_subject" value="Nova Pré-Inscrição Academia">
+                            <input type="hidden" name="_captcha" value="true">
+
+                            <div>
+                                <label class="block text-accent text-sm font-bold mb-2">ESCOLHA SUA FORMAÇÃO:</label>
+                                <div class="relative">
+                                    <select id="curso-select" name="curso_interesse" class="w-full p-4 rounded-xl bg-primary border-2 border-accent text-white font-medium focus:outline-none focus:ring-2 focus:ring-white appearance-none cursor-pointer">
+                                        <option value="Workshop Comida Típica">Workshop de Comida Típica</option>
+                                        <option value="Workshop Kitutes de Festa">Workshop de Kitutes de Festa</option>
+                                        <option value="Mini Chef (Culinária Divertida)">Formação Mini Chef (Culinária Divertida)</option>
+                                        <option value="Culinária Inicial">Formação de Culinária Inicial</option>
+                                        <option value="Culinária Intermédia">Formação de Culinária Intermédia</option>
+                                        <option value="Mesa e Bar">Formação de Mesa e Bar</option>
+                                        <option value="Adornos do Lar">Formação de Adornos do Lar</option>
+                                        <option value="Protocolo de Evento">Formação de Protocolo de Evento</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-accent"><i data-lucide="chevron-down"></i></div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input type="text" name="name" placeholder="Seu Nome Completo" required class="w-full p-3 rounded-lg bg-white/5 border border-white/30 text-white placeholder-gray-400 focus:border-accent outline-none">
+                                <input type="tel" name="telefone" placeholder="Telefone / WhatsApp" required class="w-full p-3 rounded-lg bg-white/5 border border-white/30 text-white placeholder-gray-400 focus:border-accent outline-none">
+                            </div>
+
+                            <div class="pt-4 flex flex-col gap-3">
+                                <button type="submit" class="w-full bg-accent text-primary font-bold py-4 rounded-xl hover:bg-white transition shadow-lg flex justify-center items-center gap-2">
+                                    <i data-lucide="mail"></i> Fazer Pré-inscrição (Email)
+                                </button>
+                                <div class="relative flex py-2 items-center">
+                                    <div class="flex-grow border-t border-white/20"></div>
+                                    <span class="flex-shrink-0 mx-4 text-gray-400 text-sm">OU</span>
+                                    <div class="flex-grow border-t border-white/20"></div>
+                                </div>
+                                <a id="btn-wa-curso" href="#" target="_blank" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-500 transition shadow-lg flex justify-center items-center gap-2">
+                                    <i data-lucide="message-circle"></i> Inscrever via WhatsApp
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="lg:w-1/2 grid grid-cols-2 gap-4 h-fit self-center">
+                    <div class="image-container">
+                        <img src="https://scontent-cpt1-1.xx.fbcdn.net/v/t39.30808-6/490779365_1224324446360410_4882222800448593237_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeEl5DRcyXh69KhPL08qzM7DZkCWDwTAjVJmQJYPBMCNUvZ_dnhrtSG_Z5knSgZbtXbGqTnqcCthl7W6nEYZfpST&_nc_ohc=9fCBgN_HmUEQ7kNvwGf0bAk&_nc_oc=AdmxSaWJk2a6Rw0KvnQAnpQcFtZ6_oXyIaj7KFZrAbM_JbUubCZXurSoJ1esMKSaH85ughmL1zXb-h0LLk40jy_l&_nc_zt=23&_nc_ht=scontent-cpt1-1.xx&_nc_gid=hENKlQ3Yc8XQJmButTLoxA&oh=00_AfrqyCgKDue5nb5Y6NGXMKoEcNnXoWEJDb_Bk39vop_-Hw&oe=6972BBC7" alt="Curso Culinária" class="rounded-xl shadow-lg mt-8 w-full transform hover:scale-105 transition duration-500">
+                        <p class="text-sm text-gray-300 mt-2 italic border-l-2 border-accent pl-2"> Formação de Mesa e Bar.</p>
+                    </div>
+                    <div class="image-container">
+                        <img src="https://scontent-cpt1-1.xx.fbcdn.net/v/t39.30808-6/490450704_1226427009483487_4876355094179317204_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeGP6MitY7R_NS7jHr1yDK42HgU2hKG6UeEeBTaEobpR4ZL-MDDq3zzGHc4Tg5QNDPK7IrURRcaPA0194nwz9oTo&_nc_ohc=Gmg6lB3mAAsQ7kNvwFyq0l8&_nc_oc=Adncepw5_K7QtDueIjjLtP77LRKNZ3J0juraU-p9dKa9hGz9uADmTSscie_Urf0OKecgUmGkj5G3v7_j8XUlrbt-&_nc_zt=23&_nc_ht=scontent-cpt1-1.xx&_nc_gid=v2_JdIAAGGEpe7Jvy_qTEg&oh=00_AfpbqCLQdE5EzRTq9f3p3_Lhmiz3iCjBM5rjXhH8sJfbNw&oe=6972C247" alt="Curso de Mesa e Bar" class="rounded-xl shadow-lg w-full transform hover:scale-105 transition duration-500">
+                        <p class="text-sm text-gray-300 mt-2 italic border-l-2 border-accent pl-2">Formação certificada em mesa e bar.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calculadora de Orçamento -->
+    <section id="orcamento" class="py-24 bg-light">
+        <div class="container mx-auto px-6">
+            <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-16 max-w-4xl mx-auto border border-gray-100">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-primary">Estimativa de Orçamento</h2>
+                    <p class="text-gray-500 mt-2">Simule rapidamente o valor do seu evento com os nossos serviços.</p>
+                    <p class="text-gray-500 mt-2"> O valor da confecção de alimentos por cuba depende do tipo de comida solicitada, a lógica por pessoa não é aplicado neste caso.</p>
+                </div>
+                
+                <form id="calc-form" class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2 uppercase">Tipo de Serviço</label>
+                        <select id="event-type" class="w-full p-4 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-purple-400 outline-none">
+                            <option value="37500">Chef do Dia</option>
+                            <option value="10000">Coffee Break Corporativo</option>
+                            <option value="2500">Refecções Diárias</option>
+                            <option value="28000">Confecção de Alimentos por Cuba</option>
+                            <option value="40000">Festas Empresariais / Finais de Ano</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2 uppercase">Nº de Pessoas / Quantidade</label>
+                        <input type="number" id="guests" value="50" min="1" class="w-full p-4 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-purple-400 outline-none">
+                    </div>
+                    <div class="md:col-span-2">
+                        <div class="bg-primary/5 p-8 rounded-2xl flex flex-col md:flex-row justify-between items-center border border-accent/20">
+                            <span class="text-xl font-medium text-gray-600">Estimativa Aproximada:</span>
+                            <span id="total-price" class="text-4xl font-bold text-primary mt-4 md:mt-0 font-serif">Kz 0,00</span>
+                        </div>
+                        
+                        <button type="button" id="whatsapp-btn" class="w-full mt-6 bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-xl shadow-lg transition duration-300 flex items-center justify-center gap-2">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.588-5.946 0-6.556 5.332-11.888 11.888-11.888 3.176 0 6.161 1.237 8.404 3.48s3.481 5.229 3.481 8.406c0 6.555-5.332 11.887-11.886 11.887-2.016 0-3.991-.512-5.741-1.488l-6.245 1.638zm6.052-4.103c1.551.921 3.251 1.408 4.983 1.408 5.405 0 9.802-4.398 9.802-9.802 0-2.618-1.02-5.08-2.871-6.931-1.85-1.851-4.311-2.871-6.931-2.871-5.404 0-9.801 4.398-9.801 9.802 0 1.933.568 3.819 1.644 5.456l-1.074 3.921 4.028-1.056zm10.59-3.212c-.285-.141-1.683-.83-1.944-.925-.261-.094-.451-.141-.641.141-.19.284-.735.925-.901 1.114-.166.19-.332.213-.617.071-.285-.141-1.202-.443-2.289-1.411-.847-.756-1.42-1.689-1.586-1.973-.166-.284-.018-.439.124-.581.127-.127.285-.331.427-.497.142-.166.189-.284.284-.473.095-.19.047-.355-.024-.497-.071-.142-.641-1.543-.878-2.112-.231-.559-.465-.483-.64-.492l-.547-.01c-.19 0-.5-.071-.76.213-.261.284-1 .974-1 2.373 0 1.399 1.02 2.752 1.163 2.941.142.189 2.006 3.063 4.859 4.291.679.292 1.209.467 1.622.599.682.217 1.303.187 1.794.114.548-.081 1.683-.688 1.921-1.352.238-.664.238-1.233.166-1.352-.07-.119-.26-.189-.545-.33z"/></svg>
+                            Solicitar Orçamento via WhatsApp
+                        </button>
+                        
+                        <p class="text-xs text-gray-400 mt-4 text-center">*Valores meramente estimativos. Solicite um orçamento oficial para valores exatos.</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const eventType = document.getElementById('event-type');
+                const guestsInput = document.getElementById('guests');
+                const totalPriceDisplay = document.getElementById('total-price');
+                const whatsappBtn = document.getElementById('whatsapp-btn');
+
+                const TELEFONE_REAL = "244945944795"; 
+
+                function formatKz(valor) {
+                    return valor.toLocaleString('pt-AO', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                }
+
+                function atualizarCalculo() {
+                    const precoUnitario = parseFloat(eventType.value) || 0;
+                    const quantidade = parseInt(guestsInput.value) || 0;
+                    const total = precoUnitario * quantidade;
+                    
+                    totalPriceDisplay.textContent = 'Kz ' + formatKz(total);
+                    return { total, precoUnitario, quantidade };
+                }
+
+                function enviarWhatsApp() {
+                    const dados = atualizarCalculo();
+                    const servicoNome = eventType.options[eventType.selectedIndex].text;
+                    const valorFormatado = formatKz(dados.total);
+                    
+                    const mensagem = `Olá! Vi o site e gostaria de um orçamento:%0A%0A` +
+                                     `*Serviço:* ${servicoNome}%0A` +
+                                     `*Quantidade:* ${dados.quantidade} pessoas/unidades%0A` +
+                                     `*Estimativa:* Kz ${valorFormatado}%0A%0A` +
+                                     `Podemos conversar sobre a disponibilidade?`;
+
+                    const url = `https://wa.me/${TELEFONE_REAL}?text=${mensagem}`;
+                    
+                    window.open(url, '_blank');
+                }
+
+                eventType.addEventListener('change', atualizarCalculo);
+                guestsInput.addEventListener('input', atualizarCalculo);
+                whatsappBtn.addEventListener('click', enviarWhatsApp);
+
+                atualizarCalculo();
+            });
+        </script>
+    </section>
+
+    <!-- Galeria de Portfólio (MODIFICADO: TAMANHOS UNIFORMES) -->
+    <section class="py-24">
+        <div class="container mx-auto px-6">
+            <h2 class="text-center text-4xl font-bold text-primary mb-16">Momentos Makena Space</h2>
+            <div class="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-8">
+                
+                <div class="image-container bg-light p-2 rounded-xl shadow-sm">
+                    <img src="https://scontent-cpt1-1.xx.fbcdn.net/v/t39.30808-6/616767164_1473739041418948_7255042927045031362_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeHtotJW8BTLOvOz6ckardqtrNDNVdgrGZWs0M1V2CsZlTD1zuYr_Tc_upIsWxdAJjGap3HSChf-4oS3MwUC-Nbf&_nc_ohc=EvC3je7l33IQ7kNvwH2aZYi&_nc_oc=Adnp0i6HCoi6KyfenljC8mp5NRgbS0CpwrUUFrmB2--5hoTsmjJtbm1fb3LY9eaJy76HSOdspBBOgKS1dbQwvAkM&_nc_zt=23&_nc_ht=scontent-cpt1-1.xx&_nc_gid=Xwz3r6XLVRUuHRN6kunoqA&oh=00_AfqDkl-s_bskBfmPaVFwFmWZ_HhyemdW0l7NPbrcl8rdKw&oe=69731C94" class="rounded-lg w-full h-72 object-cover">
+                    <p class="photo-caption">Momentos de Culinária inicial.</p>
+                </div>
+
+                <div class="image-container bg-light p-2 rounded-xl shadow-sm">
+                    <img src="https://scontent-cpt1-1.xx.fbcdn.net/v/t39.30808-6/495081635_1245746807551507_4104063581306797370_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeHNtxrKVA7PYbGYjkQFCs3Oct0gEqapvPFy3SASpqm88ZzlClrLy9MrKyWP1ScOFV3dltJOzqhNlp3PBu_sN-fm&_nc_ohc=WxYV9t3w84EQ7kNvwFSL1Kz&_nc_oc=AdmidiNumuHrqnpU2uz82LQ14UD-kAmk8hhlD_67pCzPFTAEN6pfYEmP9_1izJAosNv-pRocdOvjrs0O9FjhEiLX&_nc_zt=23&_nc_ht=scontent-cpt1-1.xx&_nc_gid=etyTCl4XLGvlYC3SCIMXLw&oh=00_AfqQrBZiZk4ZDJZ3MukwcT7Rt3H-cATF9l1h883M9oPLFA&oe=6972D5A0" class="rounded-lg w-full h-72 object-cover">
+                    <p class="photo-caption">Momentos de Culinária com o Mini Chef.</p>
+                </div>
+
+                <div class="image-container bg-light p-2 rounded-xl shadow-sm">
+                    <img src="https://scontent-cpt1-1.xx.fbcdn.net/v/t39.30808-6/571297790_1401306611995525_6978546265694163420_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeFnzq-SSiPSTevEX6oJUdpMFqPJA3VKozAWo8kDdUqjMO7Tux_f31i-8e4FgOjn6TMbuHr8xXt2m8O2pWdVAgI8&_nc_ohc=8Gys6TlJ3asQ7kNvwFCuLuP&_nc_oc=AdlyLo3sUjPQmCahyN3Uqhig9mDItp2lxS0yNT8ujpSjD8kmYyEmjIksQglZ5cj-_G3LgONXRpOuEfglmhdiz9Mw&_nc_zt=23&_nc_ht=scontent-cpt1-1.xx&_nc_gid=ud-ho-RfRpcgMEE6WTpXig&oh=00_AfpDR-z2YLKyoExILSGXoS6held_vAHIfeotffgQUgwIbw&oe=6972E354" class="rounded-lg w-full h-72 object-cover">
+                    <p class="photo-caption">Refeições diárias.</p>
+                </div>
+
+                <div class="image-container bg-light p-2 rounded-xl shadow-sm">
+                    <img src="https://scontent-cpt1-1.xx.fbcdn.net/v/t39.30808-6/525396973_1317571923702328_8311482162771101445_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeGYumnLw2pq5NBf5A3L1OYtBnanp2d3N3cGdqenZ3c3d8cebsxXQk-EM4yy-OCAWfCWDZSrXse5wiUGOYMAPPhp&_nc_ohc=ppdG0Knq_jUQ7kNvwEFPIQo&_nc_oc=AdkRYbNEtReJrXqrJwRmNlaCE1jA5wSQf9hfivnOyl8L45AV8CXAdGnGLpHTQMgyGk4aTXcrFMnLbl2RFaD0_slQ&_nc_zt=23&_nc_ht=scontent-cpt1-1.xx&_nc_gid=H46-5z54tMF-ofl_N3yH9g&oh=00_Afr7cUnORGn77CbwnXAAb-rLcS3Xub3BKlgFaLNtG4ToQQ&oe=6975DC6A" alt="Evento 3">
+                    <p class="photo-caption"> Pastéis de bacalhau, uma iguaria clássica da culinária portuguesa..</p>
+                </div>
+
+                <div class="image-container bg-light p-2 rounded-xl shadow-sm">
+                    <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=400" class="rounded-lg w-full h-72 object-cover" alt="Evento 4">
+                    <p class="photo-caption">Detalhe do serviço de Mesa.</p>
+                </div>
+
+                <div class="image-container bg-light p-2 rounded-xl shadow-sm">
+                    <img src="https://scontent-cpt1-1.xx.fbcdn.net/v/t39.30808-6/490813422_1224320243027497_1372315765352175854_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeEUj7GU1AqC7ZDfc3TrYmuiOM5wtwcmj0w4znC3ByaPTAIpAqSoBYkpSyetATUwXmdI8vSjcTIKevHbmhQKPv31&_nc_ohc=ITAICx2-FWAQ7kNvwGIzwry&_nc_oc=AdlwixzEBJICFNeTTsFWmHy7SKBevi4D_EVrRG4bMpH-35xqZXRnAIbDPIDRtIO3wO7hScREUi7xl-D5JQD5Ek8b&_nc_zt=23&_nc_ht=scontent-cpt1-1.xx&_nc_gid=D99iGDyvtNYhnG_TzyT7sg&oh=00_Afp7445pPRgcujFA6Y15Woe94t3pHHsdKr6C14lxoNcgVw&oe=6972D26B" class="rounded-lg w-full h-72 object-cover">
+                    <p class="photo-caption"> Workshop de Comida Típica.</p>
+                </div>
+
+                <div class="image-container bg-light p-2 rounded-xl shadow-sm">
+                    <img src="https://scontent-cpt1-1.xx.fbcdn.net/v/t39.30808-6/511043062_1286649000127954_6321983053517406820_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeGVt6R-5cYSXGWERYKWoF5ofxE_-mob7xt_ET_6ahvvG-s9ONHYZiUN9_91KqrMgWi212OtPbAgYjPKcbHdKuRI&_nc_ohc=ym9H-RK6J7oQ7kNvwHGnkgJ&_nc_oc=AdleDQoA4sB_jmGDIGksQDvot4FUZuYwvMFwzI2gcKcnMq45iJ8P48bhAfBrUykhdg6KMMiWCnVitqYtm-0Sqku6&_nc_zt=23&_nc_ht=scontent-cpt1-1.xx&_nc_gid=1pDm8mLdJH1guLYkKnr5WQ&oh=00_AfrMW3P0TlGqq_Kaqc04x48TenmFXGagDuKeb2tYx4WCtg&oe=69732B6F " class="rounded-lg w-full h-72 object-cover">
+                    <p class="photo-caption">Formação de Salgados e Mini doces (Certificação.)</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- NOVA SECÇÃO: VIDEOS E MEDIA (ORGANIZADA POR FORMATO) -->
+    <section id="videos" class="py-24 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-accent font-bold uppercase tracking-widest text-sm">Multimédia</span>
+                <h2 class="text-4xl font-bold text-primary mt-2 mb-4">Makena em Movimento</h2>
+                <div class="h-1 w-20 bg-accent mx-auto mb-6"></div>
+                <p class="text-gray-600">Explore nossa coleção de vídeos, organizados para sua melhor visualização.</p>
+               
+                    </ul>
+                </div>
+            </div>
+
+            <!-- BLOCO 1: VÍDEOS HORIZONTAIS (Facebook, Youtube, Local) -->
+            <div class="mb-20">
+                <h3 class="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-2 border-l-4 border-primary pl-4">
+                    <i data-lucide="monitor" class="w-6 h-6 text-primary"></i>
+                                                       Vídeos & Apresentações.
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- SLOT HORIZONTAL 1: Vídeo Local Hiper-Realista (Conceito) -->
+                    <div class="video-card bg-light rounded-2xl p-4 shadow-lg hover:shadow-xl transition duration-300">
+                        <div class="flex items-center gap-2 mb-3 text-primary font-bold">
+                            <i data-lucide="video" class="w-5 h-5"></i>
+                            <span>Makena: A Essência (Conceito)</span>
+                        </div>
+                        <div class="embed-container ratio-16-9">
+                            <!-- SUBSTITUIR 'src' PELO LINK DO SEU VÍDEO FINAL -->
+                            <!-- Poster usado como placeholder da visão hiper-realista -->
+                            <video controls poster="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80">
+                                <!-- IMPORTANTE: Coloque o seu video 'video-makena.mp4' numa pasta chamada 'videos' -->
+                                <source src="videos/video-makena.mp4" type="video/mp4">
+                                O seu navegador não suporta a tag de vídeo.
+                            </video>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-3 italic">Experiência visual da nossa gastronomia de luxo.</p>
+                    </div>
+
+                    <!-- SLOT HORIZONTAL 2: Facebook Horizontal -->
+                    <div class="video-card bg-blue-50 border border-blue-100 rounded-2xl p-4 shadow-lg hover:shadow-xl transition duration-300">
+                        <div class="flex items-center gap-2 mb-3 text-[#1877F2] font-bold">
+                            <i data-lucide="facebook" class="w-5 h-5"></i>
+                            <span>Destaque do Facebook</span>
+                        </div>
+                        <div class="embed-container ratio-16-9">
+                            <!-- SUBSTITUIR 'src' PELO LINK DO FACEBOOK -->
+                <iframe src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F862670229699476%2F&show_text=false&width=560&t=0" width="560" height="314" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowFullScreen="true"></iframe>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-3 italic">Momentos partilhados na nossa comunidade.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 2: VÍDEOS VERTICAIS (Reels, TikTok, Shorts) -->
+            <div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-2 border-l-4 border-[#E1306C] pl-4">
+                    <i data-lucide="smartphone" class="w-6 h-6 text-[#E1306C]"></i>
+                    Reels, TikTok & Shorts 
+                </h3>
+
+                <!-- Centralizado para focar no conteúdo vertical - Ajustado para 3 colunas -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto">
+                    <!-- SLOT VERTICAL 1 (Instagram) -->
+                    <div class="video-card bg-white border border-gray-100 rounded-2xl p-4 shadow-lg hover:shadow-xl transition duration-300">
+                        <div class="flex items-center gap-2 mb-3 text-[#E1306C] font-bold">
+                            <i data-lucide="instagram" class="w-5 h-5"></i>
+                            <span>Instagram Reels</span>
+                        </div>
+                        <div class="embed-container ratio-9-16">
+                            <!-- Link corrigido para usar /embed -->
+                            <iframe 
+                                src="https://www.instagram.com/reel/DSetf6DDSey/embed" 
+                                allowtransparency="true" 
+                                allowfullscreen="true" 
+                                scrolling="no">
+                            </iframe>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-3 italic">Destaques rápidos e visuais.</p>
+                    </div>
+
+                    <!-- SLOT VERTICAL 2 (TikTok) -->
+                    <div class="video-card bg-white border border-gray-100 rounded-2xl p-4 shadow-lg hover:shadow-xl transition duration-300">
+                        <div class="flex items-center gap-2 mb-3 text-black font-bold">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                            <span>TikTok Trends</span>
+                        </div>
+                        <div class="embed-container ratio-9-16">
+                            <!-- 
+                                CORREÇÃO APLICADA: 
+                                O ID '7450171273453292806' foi extraído do teu link e colocado na estrutura de embed.
+                            -->
+                            <iframe 
+                                src="https://www.tiktok.com/embed/v2/7450171273453292806" 
+                                allowfullscreen 
+                                scrolling="no" 
+                                allow="encrypted-media;">
+                            </iframe>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-3 italic">A nossa energia viral.</p>
+                    </div>
+
+                    <!-- SLOT VERTICAL 3 (Facebook Reels - NOVO) -->
+                    <div class="video-card bg-blue-50 border border-blue-100 rounded-2xl p-4 shadow-lg hover:shadow-xl transition duration-300">
+                        <div class="flex items-center gap-2 mb-3 text-[#1877F2] font-bold">
+                            <i data-lucide="facebook" class="w-5 h-5"></i>
+                            <span>Facebook Reels</span>
+                        </div>
+                        <div class="embed-container ratio-9-16">
+                            <!-- Sintaxe corrigida -->
+                            <iframe 
+                                src="https://www.facebook.com/plugins/video.php?height=476&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1635410521162464%2F&show_text=false&width=267&t=0" 
+                                scrolling="no" 
+                                allowfullscreen="true" 
+                                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+                            </iframe>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-3 italic">Histórias curtas do Facebook.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Contact Section OTIMIZADA -->
+    <section id="contato" class="py-24 relative bg-primary text-white">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">Vamos Criar um Evento Inesquecível?</h2>
+                <p class="text-xl opacity-80">Nossa equipa está pronta para desenhar uma experiência única para si. Preencha o formulário abaixo.</p>
+            </div>
+            
+            <div class="bg-white rounded-2xl p-8 md:p-12 text-gray-800 shadow-2xl max-w-3xl mx-auto">
+                <form action="https://formsubmit.co/makenaespaco21@gmail.com" method="POST" target="_blank" class="space-y-6">
+                    <input type="hidden" name="_template" value="table"> 
+                    <input type="hidden" name="_subject" value="Nova Solicitação via Site Makena Space">
+                    <input type="hidden" name="_captcha" value="true"> 
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <input type="text" name="name" placeholder="Seu Nome" required class="w-full p-4 border rounded-xl outline-none focus:border-accent bg-gray-50">
+                        <input type="email" name="email" placeholder="E-mail" required class="w-full p-4 border rounded-xl outline-none focus:border-accent bg-gray-50">
+                    </div>
+                    <textarea name="message" rows="5" placeholder="Detalhes do seu pedido..." required class="w-full p-4 border rounded-xl outline-none focus:border-accent bg-gray-50"></textarea>
+                    
+                    <button type="submit" class="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-accent hover:text-primary transition shadow-lg text-lg">Enviar Solicitação</button>
+                </form>
+                <p class="text-xs text-center text-gray-400 mt-4">Ao clicar, uma nova aba abrirá para confirmar o envio.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer OTIMIZADO -->
+    <footer class="bg-gray-900 text-white pt-20 pb-10 border-t border-gray-800">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-12 text-center md:text-left mb-16">
+                <!-- Coluna 1: Endereço -->
+                <div>
+                    <div class="flex items-center justify-center md:justify-start gap-3 mb-4 text-accent">
+                        <i data-lucide="map-pin" class="w-6 h-6"></i>
+                        <h4 class="font-bold text-lg uppercase tracking-wider">Localização</h4>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">Centralidade, Quadra-46 <br>Cuito, Angola</p>
+                </div>
+
+                <!-- Coluna 2: Contactos -->
+                <div>
+                    <div class="flex items-center justify-center md:justify-start gap-3 mb-4 text-accent">
+                        <i data-lucide="phone" class="w-6 h-6"></i>
+                        <h4 class="font-bold text-lg uppercase tracking-wider">Contactos</h4>
+                    </div>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="tel:+244945944795" class="hover:text-white transition">945 944 795</a></li>
+                        <li><a href="mailto:makenaespaco21@gmail.com" class="hover:text-white transition">makenaespaco21@gmail.com</a></li>
+                    </ul>
+                </div>
+
+                <!-- Coluna 3: Redes Sociais -->
+                <div>
+                    <div class="flex items-center justify-center md:justify-start gap-3 mb-4 text-accent">
+                        <i data-lucide="share-2" class="w-6 h-6"></i>
+                        <h4 class="font-bold text-lg uppercase tracking-wider">Siga-nos</h4>
+                    </div>
+                    <div class="flex justify-center md:justify-start gap-4">
+                        <a href="https://www.facebook.com/makenaspace" target="_blank" rel="noopener noreferrer" class="bg-gray-800 p-3 rounded-full hover:bg-accent hover:text-primary transition">
+                            <i data-lucide="facebook" class="w-5 h-5"></i>
+                        </a>
+
+                        <a href="https://www.instagram.com/makenaspace21/" target="_blank" rel="noopener noreferrer" class="bg-gray-800 p-3 rounded-full hover:bg-accent hover:text-primary transition">
+                            <i data-lucide="instagram" class="w-5 h-5"></i>
+                        </a>
+
+                        <a href="https://www.tiktok.com/@makenaspace" target="_blank" rel="noopener noreferrer" class="bg-gray-800 p-3 rounded-full hover:bg-accent hover:text-primary transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assinatura e Copyright -->
+            <div class="border-t border-gray-800 pt-8 text-center">
+                <p class="font-bold text-accent text-xl mb-1">MAKENA ESPAÇO - Comércio e Serviço (SU)</p>
+                <p class="text-gray-500 italic mb-6">Sabor Tradicional</p>
+                <p class="text-gray-600 text-xs">&copy; 2026 Makena Space. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/244945944795" target="_blank" class="fixed bottom-6 right-6 bg-accent text-primary p-4 rounded-full shadow-2xl hover:scale-110 transition-transform z-[99] flex items-center gap-2 font-bold">
+        <i data-lucide="message-circle" class="w-8 h-8"></i>
+        <span class="hidden md:inline">Fale Connosco</span>
+    </a>
+
+    <!-- Scripts -->
+    <script>
+        lucide.createIcons();
+
+        // Menu Hambúrguer Logica
+        const menuBtn = document.getElementById('menu-btn');
+        const closeMenu = document.getElementById('close-menu');
+        const overlay = document.getElementById('menu-overlay');
+
+        if (menuBtn && overlay) {
+            menuBtn.addEventListener('click', () => {
+                overlay.classList.add('active');
+            });
+        }
+        
+        if (closeMenu && overlay) {
+            closeMenu.addEventListener('click', () => {
+                overlay.classList.remove('active');
+            });
+        }
+        
+        if (overlay) {
+            overlay.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => overlay.classList.remove('active'));
+            });
+        }
+
+        // Lógica de Full Screen
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Erro ao tentar ativar tela cheia: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // WhatsApp da Academia
+        const cursoSelect = document.getElementById('curso-select');
+        const waBtn = document.getElementById('btn-wa-curso');
+
+        function updateWhatsAppLink() {
+            if (!cursoSelect || !waBtn) return;
+            const cursoSelecionado = cursoSelect.value;
+            const telefone = "244945944795";
+            const mensagem = encodeURIComponent(`Olá, Makena Space! Tenho interesse na *${cursoSelecionado}*. Gostaria de mais informações sobre datas e valores.`);
+            waBtn.href = `https://wa.me/${telefone}?text=${mensagem}`;
+        }
+
+        if (cursoSelect) {
+            cursoSelect.addEventListener('change', updateWhatsAppLink);
+            updateWhatsAppLink();
+        }
+    </script>
+</body>
+</html>
